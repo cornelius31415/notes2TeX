@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>notes2TeX</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>notes2TeX</h1>
+    <p class="subtitle">Turn your handwritten notes into LaTeX</p>
+
+    <div class="layout">
+
+        <!-- LEFT -->
+        <div class="left">
+
+            <div class="upload-box" onclick="document.getElementById('file').click()">
+                📁 UPLOAD
+                <input type="file" id="file" accept="image/*" hidden>
+            </div>
+
+            <!-- 📸 IMAGE VISIBLE HERE -->
+            <img id="preview" hidden>
+
+            <button id="btn" onclick="send()" hidden>
+                CONVERT
+            </button>
+
+            <div id="loading" hidden>⏳ Converting ...</div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right">
+
+          <div class="card code-card">
+
+    <div class="card-header">
+        <div class="card-title">LaTeX Code</div>
+
+<button class="copy-btn" onclick="copyLatex()" aria-label="Copy">
+    <svg class="copy-icon" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+    </svg>
+</button>
+    </div>
+
+    <pre id="code"></pre>
+
+</div>
+
+
+
+<div class="card preview-card">
+
+    <div class="card-header">
+        <div class="card-title">Preview</div>
+
+        <div class="actions">
+            <button class="pdf-btn" onclick="exportPDF()">
+PDF
+</button>
+        </div>
+    </div>
+
+    <div id="render"></div>
+
+</div>
+
+
+
+
+        </div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
