@@ -3,6 +3,12 @@ const preview = document.getElementById("preview");
 const btn = document.getElementById("btn");
 const loading = document.getElementById("loading");
 
+function setLoading(state) {
+    const el = document.getElementById("loading");
+    if (!el) return;
+    el.style.display = state ? "block" : "none";
+}
+
 let selectedFile = null;
 
 /* =========================
@@ -71,6 +77,9 @@ async function send() {
 
     btn.disabled = true;
 
+    setLoading(true);
+
+
     // 👉 WICHTIG: NICHT hidden verwenden
     loading.style.display = "block";
 
@@ -108,17 +117,14 @@ async function send() {
 
         // 🔥 FORCE UI UPDATE (wichtig für online!)
         setTimeout(() => {
-            loading.style.display = "none";
+            setLoading(false);
             btn.disabled = false;
         }, 50);
     }
 }
 
 
-function setLoading(state) {
-    document.getElementById("loading").style.display =
-        state ? "block" : "none";
-}
+
 
 /* =========================
    COPY LATEX
