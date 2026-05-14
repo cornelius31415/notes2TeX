@@ -249,3 +249,65 @@ position: relative;
     background: #f3f4f6;
     border-color: #d1d5db;
 }
+
+/* 📱 MOBILE VERSION */
+@media (max-width: 900px) {
+
+    body {
+        height: auto;
+    }
+
+    .container {
+        height: auto;
+        padding: 20px;
+    }
+
+    .layout {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .left {
+        max-width: 100%;
+        width: 100%;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right {
+        width: 100%;
+    }
+
+    .upload-box {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    #preview {
+        width: 100%;
+        max-width: 320px;
+        max-height: 250px;
+        object-fit: contain;
+    }
+
+    button {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .card {
+        height: 260px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    .subtitle {
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+}
