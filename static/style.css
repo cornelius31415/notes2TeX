@@ -168,8 +168,11 @@ position: relative;
 
 /* CODE STYLE */
 #code {
+    width: 100%;
+    min-height: 200px;
     font-family: monospace;
-    white-space: pre-wrap;
+    font-size: 14px;
+    padding: 10px;
 }
 
 .card-header {

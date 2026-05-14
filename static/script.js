@@ -101,18 +101,13 @@ async function send() {
 
         const latex = data.latex || "";
 
-        document.getElementById("code").innerText = latex;
+const codeEl = document.getElementById("code");
+const renderEl = document.getElementById("render");
 
-        katex.render(
-            
-            latex
-        ,
-            document.getElementById("render"),
-            {
-                throwOnError: false,
-                displayMode: true
-            }
-        );
+codeEl.value = latex;
+
+// initial render
+renderLatex(latex);
 
     } catch (err) {
 
@@ -205,3 +200,22 @@ function exportPDF() {
 
     win.document.close();
 }
+
+function renderLatex(tex) {
+
+    const el = document.getElementById("render");
+    el.innerHTML = "";
+
+    try {
+        katex.render(tex, el, {
+            throwOnError: false,
+            displayMode: true
+        });
+    } catch (e) {
+        el.innerText = "Render error";
+    }
+}
+
+document.getElementById("code").addEventListener("input", (e) => {
+    renderLatex(e.target.value);
+});
