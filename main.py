@@ -63,10 +63,8 @@ async def bild_zu_text(file: UploadFile = File(...)):
                     },
                     {
                         "type": "text",
-                        "text": (
-                            "Extrahiere alle mathematischen Inhalte aus dem Bild. "
-                            "Gib ausschließlich gültiges LaTeX zurück. "
-                            "Kein Fließtext, keine Erklärungen."
+                        "text": ( "Extract the text from the image and convert it into a nicely structured Latex Document \
+                         giving me the latex code. it should be ready to copy and paste into an empty overleaf document.  "
                         )
                     }
                 ],
