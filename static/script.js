@@ -105,7 +105,7 @@ async function send() {
 
         katex.render(
             `\\\\begin{aligned}
-        ${previewLatex}
+            ${latex}
         \\\\end{aligned}`,
             document.getElementById("render"),
             {
