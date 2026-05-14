@@ -62,7 +62,7 @@ async function send() {
     if (!file) return;
 
     // Loading anzeigen
-    document.getElementById("loading").hidden = false;
+    document.getElementById("loading").style.display = "block";
 
     // Button deaktivieren
     btn.disabled = true;
@@ -99,7 +99,7 @@ async function send() {
     finally {
 
         // ✅ Loading wieder verstecken
-        document.getElementById("loading").hidden = true;
+        document.getElementById("loading").style.display = "none";
 
         // ✅ Button wieder aktivieren
         btn.disabled = false;
