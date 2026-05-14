@@ -57,7 +57,7 @@ fileInput.addEventListener("change", async () => {
 
 async function send() {
 
-    const file = fileInput.files[0];
+    const file = selectedFile;
 
     if (!file) return;
 
