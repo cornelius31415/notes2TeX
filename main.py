@@ -68,28 +68,29 @@ async def bild_zu_text(file: UploadFile = File(...)):
 Extract the handwritten mathematical notes from the image and convert them into clean LaTeX.
 
 Requirements:
-- Return ONLY valid LaTeX
+- Return ONLY valid LaTeX equations
 - No markdown
 - No code fences
 - No explanations
 - No \\documentclass
 - No \\begin{document}
 - No \\end{document}
+- Do NOT include \\begin{aligned}
+- Do NOT include \\end{aligned}
 
 Formatting:
 - Use proper mathematical LaTeX
 - Preserve the structure from the notes
 - Use line breaks with \\\\
-- Format equations cleanly for aligned rendering
 - Keep multiline equations readable
 
-Example format:
+Example:
 
 x &= 2 \\\\
 y &= 3 \\\\
 z &= x + y
 
-Return only the LaTeX content.
+Return only the equations.
 """
                    
                         )
