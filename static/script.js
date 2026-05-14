@@ -104,9 +104,9 @@ async function send() {
         document.getElementById("code").innerText = latex;
 
         katex.render(
-            `\\\\begin{aligned}
-            ${latex}
-        \\\\end{aligned}`,
+            
+            latex
+        ,
             document.getElementById("render"),
             {
                 throwOnError: false,
