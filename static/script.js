@@ -53,40 +53,63 @@ fileInput.addEventListener("change", async () => {
 });
 
 
+
+
 async function send() {
-    const file = selectedFile || fileInput.files[0];
+
+    const file = fileInput.files[0];
+
     if (!file) return;
 
+    // Loading anzeigen
     document.getElementById("loading").hidden = false;
+
+    // Button deaktivieren
+    btn.disabled = true;
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
+
         const res = await fetch("/api/bild-zu-text", {
             method: "POST",
             body: formData
         });
 
         const data = await res.json();
+
         const latex = data.latex;
 
-        // 📄 LaTeX Code anzeigen
+        // Code anzeigen
         document.getElementById("code").innerText = latex;
 
-        // 🧠 KaTeX Render
+        // Preview rendern
         katex.render(latex, document.getElementById("render"), {
-            throwOnError: false
+            throwOnError: false,
+            displayMode: true
         });
 
     } catch (err) {
-        console.error(err);
+
         document.getElementById("code").innerText =
             "Fehler: " + err.message;
     }
 
-    document.getElementById("loading").hidden = false;
+    finally {
+
+        // ✅ Loading wieder verstecken
+        document.getElementById("loading").hidden = true;
+
+        // ✅ Button wieder aktivieren
+        btn.disabled = false;
+    }
 }
+
+
+
+
+
 
 function copyLatex() {
     const text = document.getElementById("code").innerText;
@@ -104,6 +127,11 @@ function copyLatex() {
             console.error("Copy failed:", err);
         });
 }
+
+
+
+
+
 
 function exportPDF() {
     const printContent = document.getElementById("render").innerHTML;
