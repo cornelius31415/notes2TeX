@@ -146,9 +146,21 @@ position: relative;
 }
 
 
+#render {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    overflow-x: auto;
+
+    padding: 20px;
+}
+
 
 /* CONTENT */
-#code, #render {
+#code {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
@@ -310,4 +322,13 @@ position: relative;
         margin-bottom: 30px;
         font-size: 14px;
     }
+}
+
+.katex-display > .katex {
+    text-align: left;
+    width: 100%;
+}
+
+.katex {
+    font-size: 1.15em;
 }

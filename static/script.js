@@ -103,10 +103,16 @@ async function send() {
 
         document.getElementById("code").innerText = latex;
 
-        katex.render(latex, document.getElementById("render"), {
-            throwOnError: false,
-            displayMode: true
-        });
+        katex.render(
+            `\\\\begin{aligned}
+        ${previewLatex}
+        \\\\end{aligned}`,
+            document.getElementById("render"),
+            {
+                throwOnError: false,
+                displayMode: true
+            }
+        );
 
     } catch (err) {
 

@@ -63,8 +63,35 @@ async def bild_zu_text(file: UploadFile = File(...)):
                     },
                     {
                         "type": "text",
-                        "text": ( "Extract the text from the image and convert it into a nicely structured Latex Document \
-                         giving me the latex code. it should be ready to copy and paste into an empty overleaf document.  "
+                        "text": (
+                           """
+Extract the handwritten mathematical notes from the image and convert them into clean LaTeX.
+
+Requirements:
+- Return ONLY valid LaTeX
+- No markdown
+- No code fences
+- No explanations
+- No \\documentclass
+- No \\begin{document}
+- No \\end{document}
+
+Formatting:
+- Use proper mathematical LaTeX
+- Preserve the structure from the notes
+- Use line breaks with \\\\
+- Format equations cleanly for aligned rendering
+- Keep multiline equations readable
+
+Example format:
+
+x &= 2 \\\\
+y &= 3 \\\\
+z &= x + y
+
+Return only the LaTeX content.
+"""
+                   
                         )
                     }
                 ],
