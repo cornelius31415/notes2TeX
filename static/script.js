@@ -1,22 +1,29 @@
 const fileInput = document.getElementById("file");
 const preview = document.getElementById("preview");
 const btn = document.getElementById("btn");
+const loading = document.getElementById("loading");
 
-// 🧠 speichert ggf. konvertierte Datei
 let selectedFile = null;
 
+/* =========================
+   FILE UPLOAD + PREVIEW
+========================= */
+
 fileInput.addEventListener("change", async () => {
+
     let file = fileInput.files[0];
     if (!file) return;
 
-    // 🟡 HEIC DETECTION
+    // HEIC detection
     const isHeic =
         file.type === "image/heic" ||
         file.name.toLowerCase().endsWith(".heic");
 
-    // 🔥 CONVERT HEIC → JPG
+    // HEIC → JPG
     if (isHeic && typeof heic2any !== "undefined") {
+
         try {
+
             const blob = await heic2any({
                 blob: file,
                 toType: "image/jpeg",
@@ -25,11 +32,10 @@ fileInput.addEventListener("change", async () => {
 
             file = new File(
                 [blob],
-                file.name.replace(".heic", ".jpg"),
+                file.name.replace(/\.heic$/i, ".jpg"),
                 { type: "image/jpeg" }
             );
 
-            console.log("HEIC → JPG konvertiert");
         } catch (err) {
             console.error("HEIC conversion failed:", err);
             alert("HEIC konnte nicht konvertiert werden.");
@@ -37,15 +43,15 @@ fileInput.addEventListener("change", async () => {
         }
     }
 
-    // 💾 speichere Datei für Upload
+    // save file
     selectedFile = file;
 
-    // 🖼️ Preview
+    // preview image
     const reader = new FileReader();
+
     reader.onload = (e) => {
         preview.src = e.target.result;
         preview.hidden = false;
-
         btn.hidden = false;
     };
 
@@ -53,18 +59,21 @@ fileInput.addEventListener("change", async () => {
 });
 
 
-
+/* =========================
+   SEND IMAGE TO BACKEND
+========================= */
 
 async function send() {
 
+    // 🔥 WICHTIG: NICHT fileInput benutzen!
     const file = selectedFile;
 
     if (!file) return;
 
-    // Loading anzeigen
-    document.getElementById("loading").style.display = "block";
+    // show loading
+    loading.style.display = "block";
 
-    // Button deaktivieren
+    // disable button
     btn.disabled = true;
 
     const formData = new FormData();
@@ -77,14 +86,16 @@ async function send() {
             body: formData
         });
 
-        const data = await res.json();
+        // safer than res.json()
+        const text = await res.text();
+        const data = JSON.parse(text);
 
-        const latex = data.latex;
+        const latex = data.latex || "";
 
-        // Code anzeigen
+        // show latex code
         document.getElementById("code").innerText = latex;
 
-        // Preview rendern
+        // render katex
         katex.render(latex, document.getElementById("render"), {
             throwOnError: false,
             displayMode: true
@@ -94,57 +105,74 @@ async function send() {
 
         document.getElementById("code").innerText =
             "Fehler: " + err.message;
-    }
 
-    finally {
+        console.error(err);
 
-        // ✅ Loading wieder verstecken
-        document.getElementById("loading").style.display = "none";
+    } finally {
 
-        // ✅ Button wieder aktivieren
+        // 🔥 ALWAYS HIDE LOADING
+        loading.style.display = "none";
+
         btn.disabled = false;
     }
 }
 
 
-
-
-
+/* =========================
+   COPY LATEX
+========================= */
 
 function copyLatex() {
+
     const text = document.getElementById("code").innerText;
 
     navigator.clipboard.writeText(text)
+
         .then(() => {
+
             const btn = document.querySelector(".copy-btn");
-            btn.innerText = "✔ Copied";
+
+            btn.innerHTML = "✔";
 
             setTimeout(() => {
-                btn.innerText = "📋 Copy";
-            }, 1500);
+
+                btn.innerHTML = `
+                    <svg class="copy-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                        d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3
+                        4H8c-1.1 0-2 .9-2 2v14c0 1.1.9
+                        2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0
+                        16H8V7h11v14z"/>
+                    </svg>
+                `;
+
+            }, 1200);
         })
+
         .catch(err => {
             console.error("Copy failed:", err);
         });
 }
 
 
-
-
-
+/* =========================
+   EXPORT PDF
+========================= */
 
 function exportPDF() {
-    const printContent = document.getElementById("render").innerHTML;
 
-    const win = window.open("", "", "width=800,height=600");
+    const content =
+        document.getElementById("render").innerHTML;
+
+    const win =
+        window.open("", "", "width=900,height=700");
 
     win.document.write(`
         <html>
         <head>
-            <title>LaTeX Export</title>
-
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-
+            <title>Export</title>
+            <link rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
             <style>
                 body {
                     font-family: Arial;
@@ -153,7 +181,7 @@ function exportPDF() {
             </style>
         </head>
         <body>
-            ${printContent}
+            ${content}
             <script>
                 window.onload = () => window.print();
             <\/script>
