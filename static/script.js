@@ -65,16 +65,14 @@ fileInput.addEventListener("change", async () => {
 
 async function send() {
 
-    // 🔥 WICHTIG: NICHT fileInput benutzen!
     const file = selectedFile;
 
     if (!file) return;
 
-    // show loading
-    loading.style.display = "block";
-
-    // disable button
     btn.disabled = true;
+
+    // 👉 WICHTIG: NICHT hidden verwenden
+    loading.style.display = "block";
 
     const formData = new FormData();
     formData.append("file", file);
@@ -86,16 +84,16 @@ async function send() {
             body: formData
         });
 
-        // safer than res.json()
-        const text = await res.text();
-        const data = JSON.parse(text);
+        if (!res.ok) {
+            throw new Error("Server Error");
+        }
+
+        const data = await res.json();
 
         const latex = data.latex || "";
 
-        // show latex code
         document.getElementById("code").innerText = latex;
 
-        // render katex
         katex.render(latex, document.getElementById("render"), {
             throwOnError: false,
             displayMode: true
@@ -106,17 +104,21 @@ async function send() {
         document.getElementById("code").innerText =
             "Fehler: " + err.message;
 
-        console.error(err);
-
     } finally {
 
-        // 🔥 ALWAYS HIDE LOADING
-        loading.style.display = "none";
-
-        btn.disabled = false;
+        // 🔥 FORCE UI UPDATE (wichtig für online!)
+        setTimeout(() => {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }, 50);
     }
 }
 
+
+function setLoading(state) {
+    document.getElementById("loading").style.display =
+        state ? "block" : "none";
+}
 
 /* =========================
    COPY LATEX
