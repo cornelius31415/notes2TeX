@@ -3,6 +3,7 @@ const preview = document.getElementById("preview");
 const btn = document.getElementById("btn");
 const loading = document.getElementById("loading");
 
+
 function setLoading(state) {
     const el = document.getElementById("loading");
     if (!el) return;
