@@ -16,7 +16,7 @@ h1 {
     text-align: center;
     font-size: 62px;
     font-weight: 700;
-    color: #111827;
+    color: #01153e;
     margin-bottom: 10px;
 }
 
@@ -29,16 +29,17 @@ h1 {
 
 /* LAYOUT */
 .container {
-    height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     padding: 20px;
+    min-height: 100vh;
 }
 
 .layout {
     display: flex;
-    flex: 1;
-    gap: 80px;
+    flex: 0;
+    gap: 40px;
     margin-top: 20px;
 }
 
@@ -110,19 +111,26 @@ button:hover {
     background: #3730a3;
 }
 
+button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 /* RIGHT */
 .right {
-    flex: 1.6;
+    flex: 0.83;
     display: flex;
     flex-direction: column;
 }
 
 /* CARDS */
 .card {
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 14px;
 
-    height: 280px;
+    height: auto;
+    min-height: 280px;
 
     display: flex;
     flex-direction: column;
@@ -144,6 +152,7 @@ position: relative;
 .preview-card {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
 }
 
 
@@ -274,6 +283,23 @@ position: relative;
     border-color: #d1d5db;
 }
 
+
+.upload-hint {
+    font-size: 13px;
+    color: #6b7280;
+
+    text-align: center;
+    line-height: 1.4;
+
+    width: 100%;
+    max-width: 220px;
+
+    margin: 6px auto 0 auto;
+}
+
+
+
+
 /* 📱 MOBILE VERSION */
 @media (max-width: 900px) {
 
@@ -344,3 +370,56 @@ position: relative;
 .katex {
     font-size: 1.15em;
 }
+
+
+
+
+
+.footer {
+    margin-top: 60px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    font-size: 13px;
+    color: #888;
+}
+
+.footer a {
+    color: #888;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+
+
+.about-section {
+    max-width: 900px;
+    margin: 40px auto 40px auto;
+
+    padding: 0 20px;
+
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.about-section p {
+    color: #252437;
+
+    line-height: 1.8;
+
+    font-size: 16px;
+
+    margin-bottom: 18px;
+}
+
+

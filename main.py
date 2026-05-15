@@ -3,6 +3,7 @@
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.staticfiles import StaticFiles
+from fastapi import Form
 import anthropic
 import base64
 import io
@@ -11,6 +12,31 @@ import pillow_heif
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from datetime import date
+from fastapi import HTTPException
+
+usage = {}
+
+DAILY_LIMIT = 5
+
+def check_limit(user_id):
+    today = str(date.today())
+
+    if user_id not in usage:
+        usage[user_id] = {"count": 0, "date": today}
+
+    if usage[user_id]["date"] != today:
+        usage[user_id] = {"count": 0, "date": today}
+
+    remaining = DAILY_LIMIT - usage[user_id]["count"]
+
+    if remaining <= 0:
+        return False, 0
+
+    usage[user_id]["count"] += 1
+    remaining = DAILY_LIMIT - usage[user_id]["count"]
+
+    return True, remaining
 
 pillow_heif.register_heif_opener()
 
@@ -18,13 +44,36 @@ pillow_heif.register_heif_opener()
 
 app = FastAPI()
 
-# ⚠️ DEV ONLY (später in .env verschieben!)
+
+@app.get("/api/status")
+async def get_status(userId: str):
+    today = str(date.today())
+
+    if userId not in usage:
+        usage[userId] = {"count": 0, "date": today}
+
+    if usage[userId]["date"] != today:
+        usage[userId] = {"count": 0, "date": today}
+
+    remaining = DAILY_LIMIT - usage[userId]["count"]
+
+    return {"remaining": remaining}
+
 client = anthropic.Anthropic(
     api_key=os.environ["ANTHROPIC_API_KEY"]
 )
 
 @app.post("/api/bild-zu-text")
-async def bild_zu_text(file: UploadFile = File(...)):
+async def bild_zu_text(file: UploadFile = File(...),userId: str = Form(...)):
+
+    print("userId:", userId)
+
+    allowed, remaining = check_limit(userId)
+
+    if not allowed:
+        return {"error": "daily_limit_reached", "remaining": 0}
+
+
     inhalt = await file.read()
 
     # 🧼 Bild normalisieren
@@ -103,7 +152,8 @@ Return only the equations.
     latex = message.content[0].text.strip()
 
     return {
-        "latex": latex
+        "latex": latex,
+        "remaining": remaining
     }
 
 

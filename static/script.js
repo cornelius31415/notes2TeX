@@ -2,7 +2,18 @@ const fileInput = document.getElementById("file");
 const preview = document.getElementById("preview");
 const btn = document.getElementById("btn");
 const loading = document.getElementById("loading");
+const quotaText = document.getElementById("quotaText");
 
+btn.disabled = true;
+
+let selectedFile = null;
+
+let userId = localStorage.getItem("uid");
+
+if (!userId) {
+    userId = crypto.randomUUID();
+    localStorage.setItem("uid", userId);
+}
 
 function setLoading(state) {
     const el = document.getElementById("loading");
@@ -10,7 +21,7 @@ function setLoading(state) {
     el.style.display = state ? "block" : "none";
 }
 
-let selectedFile = null;
+
 
 /* =========================
    FILE UPLOAD + PREVIEW
@@ -52,6 +63,8 @@ fileInput.addEventListener("change", async () => {
 
     // save file
     selectedFile = file;
+    btn.disabled = false;
+    
 
     // preview image
     const reader = new FileReader();
@@ -59,7 +72,7 @@ fileInput.addEventListener("change", async () => {
     reader.onload = (e) => {
         preview.src = e.target.result;
         preview.hidden = false;
-        btn.hidden = false;
+        
     };
 
     reader.readAsDataURL(file);
@@ -71,6 +84,8 @@ fileInput.addEventListener("change", async () => {
 ========================= */
 
 async function send() {
+
+    console.log("SEND FUNCTION TRIGGERED");
 
     const file = selectedFile;
 
@@ -87,7 +102,11 @@ async function send() {
     const formData = new FormData();
     formData.append("file", file);
 
+    formData.append("userId", userId);
+
     try {
+
+        console.log([...formData.entries()]);
 
         const res = await fetch("/api/bild-zu-text", {
             method: "POST",
@@ -95,10 +114,15 @@ async function send() {
         });
 
         if (!res.ok) {
-            throw new Error("Server Error");
+            const err = await res.json();
+            throw new Error(err.detail || err.error || "Server Error");
         }
 
         const data = await res.json();
+
+        if (data.remaining !== undefined) {
+            quotaText.innerText = `${data.remaining} uploads left today`;
+        }
 
         const latex = data.latex || "";
 
@@ -112,8 +136,10 @@ renderLatex(latex);
 
     } catch (err) {
 
-        document.getElementById("code").innerText =
-            "Fehler: " + err.message;
+        document.getElementById("errorBox").innerText =
+        "❌ " + err.message;
+
+    quotaText.innerText = "Limit reached. Available again tomorrow.";
 
     } finally {
 
@@ -220,3 +246,23 @@ function renderLatex(tex) {
 document.getElementById("code").addEventListener("input", (e) => {
     renderLatex(e.target.value);
 });
+
+
+
+async function loadQuota() {
+    try {
+        const res = await fetch(`/api/status?userId=${userId}`);
+        const data = await res.json();
+
+        quotaText.innerText =
+            ` ${data.remaining} uploads left today`;
+
+    } catch (err) {
+        console.error(err);
+
+        quotaText.innerText =
+            "No signup required.";
+    }
+}
+
+loadQuota();

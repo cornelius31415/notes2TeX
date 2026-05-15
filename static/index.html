@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>notes2TeX </title>
 
-<link rel="stylesheet" href="style.css?v=123">
+<link rel="stylesheet" href="style.css?v=16">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,13 +20,17 @@
 
 </head>
 
+
+
+
+
+
 <body>
 
 <div class="container">
 
     <h1>notes2TeX</h1>
     <p class="subtitle">Turn your handwritten notes into LaTeX</p>
-    <p class="subtitle">You can edit the LaTeX code and export your notes as a PDF</p>
     <div class="layout">
 
         <!-- LEFT -->
@@ -40,13 +44,21 @@
             <!-- 📸 IMAGE VISIBLE HERE -->
             <img id="preview" hidden>
 
-            <button id="btn" onclick="send()" hidden>
+            <button id="btn" onclick="send()" disabled >
                 CONVERT
             </button>
 
+            <p class="upload-hint">
+                No signup required
+            </p>
+
+            <p class="upload-hint" id="quotaText"></p>
+            
             <div id="loading" style="display:none;">
                 ⏳ Converting...
             </div>
+
+            <div id="errorBox" style="color:red; margin-top:10px; font-size:14px;"></div>
 
         </div>
 
@@ -93,9 +105,62 @@ PDF
         </div>
 
     </div>
+
+    <div class="about-section">
+
+        <h2>AI-Powered Handwritten Notes to LaTeX</h2>
+        <p>
+            notes2TeX uses advanced AI models to transform handwritten mathematical and scientific notes into clean, structured LaTeX code in seconds.
+            </p>
+            
+            <p>
+            Upload an image of your handwritten notes.
+            </p>
+            
+            <p>
+            The system automatically converts it into editable LaTeX code.
+            </p>
+            
+            <p>
+            You can fully edit the generated LaTeX.
+            </p>
+            
+            <p>
+            Adjust formulas. Refine structure. Fix details instantly.
+            </p>
+            
+            <p>
+            The preview updates in real time while you edit.
+            </p>
+            
+            <p>
+            Export your final document as a high-quality PDF with one click.
+            </p>
+            
+            <p>
+            Built for students, researchers, engineers, and anyone who wants a faster and more modern workflow for digital note-taking and mathematical writing.
+            </p>
+    
+    </div>
 </div>
 
-<script src="script.js"></script>
 
+
+
+
+
+
+
+
+<footer class="footer">
+    <a href="/impressum.html">Impressum</a>
+    <span>•</span>
+    <a href="/datenschutz.html">Datenschutz</a>
+</footer>
+
+
+
+
+<script src="script.js"></script>
 </body>
 </html>
