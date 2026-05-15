@@ -16,6 +16,13 @@ from datetime import date
 from fastapi import HTTPException
 import sqlite3
 from fastapi import Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+app = FastAPI()
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
 
 
 
@@ -88,20 +95,28 @@ pillow_heif.register_heif_opener()
 
 
 
-app = FastAPI()
+
 
 
 @app.get("/api/status")
-async def get_status(userId: str):
+async def get_status(request: Request, userId: str):
+
     today = str(date.today())
 
-    if userId not in usage:
-        usage[userId] = {"count": 0, "date": today}
+    ip = request.client.host
 
-    if usage[userId]["date"] != today:
-        usage[userId] = {"count": 0, "date": today}
+    user_key = f"{ip}_{userId}"
 
-    remaining = DAILY_LIMIT - usage[userId]["count"]
+    cursor.execute("""
+        SELECT count FROM usage
+        WHERE user_key = ? AND date = ?
+    """, (user_key, today))
+
+    row = cursor.fetchone()
+
+    current_count = row[0] if row else 0
+
+    remaining = DAILY_LIMIT - current_count
 
     return {"remaining": remaining}
 
@@ -110,6 +125,7 @@ client = anthropic.Anthropic(
 )
 
 @app.post("/api/bild-zu-text")
+@limiter.limit("5/minute")
 async def bild_zu_text(
     request: Request,
     file: UploadFile = File(...),
