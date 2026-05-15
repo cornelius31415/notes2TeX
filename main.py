@@ -14,31 +14,77 @@ from dotenv import load_dotenv
 load_dotenv()
 from datetime import date
 from fastapi import HTTPException
+import sqlite3
+from fastapi import Request
 
-usage = {}
+
 
 DAILY_LIMIT = 5
 
-def check_limit(user_id):
+conn = sqlite3.connect("usage.db", check_same_thread=False)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS usage (
+    user_key TEXT,
+    date TEXT,
+    count INTEGER
+)
+""")
+
+conn.commit()
+
+def check_limit(user_key):
+
     today = str(date.today())
 
-    if user_id not in usage:
-        usage[user_id] = {"count": 0, "date": today}
+    cursor.execute("""
+        SELECT count FROM usage
+        WHERE user_key = ? AND date = ?
+    """, (user_key, today))
 
-    if usage[user_id]["date"] != today:
-        usage[user_id] = {"count": 0, "date": today}
+    row = cursor.fetchone()
 
-    remaining = DAILY_LIMIT - usage[user_id]["count"]
+    # erster request heute
+    if row is None:
 
-    if remaining <= 0:
+        cursor.execute("""
+            INSERT INTO usage (user_key, date, count)
+            VALUES (?, ?, ?)
+        """, (user_key, today, 1))
+
+        conn.commit()
+
+        remaining = DAILY_LIMIT - 1
+
+        return True, remaining
+
+    current_count = row[0]
+
+    # limit erreicht
+    if current_count >= DAILY_LIMIT:
         return False, 0
 
-    usage[user_id]["count"] += 1
-    remaining = DAILY_LIMIT - usage[user_id]["count"]
+    # count erhöhen
+    new_count = current_count + 1
+
+    cursor.execute("""
+        UPDATE usage
+        SET count = ?
+        WHERE user_key = ? AND date = ?
+    """, (new_count, user_key, today))
+
+    conn.commit()
+
+    remaining = DAILY_LIMIT - new_count
 
     return True, remaining
 
+
+
 pillow_heif.register_heif_opener()
+
+
 
 
 
@@ -64,11 +110,19 @@ client = anthropic.Anthropic(
 )
 
 @app.post("/api/bild-zu-text")
-async def bild_zu_text(file: UploadFile = File(...),userId: str = Form(...)):
+async def bild_zu_text(
+    request: Request,
+    file: UploadFile = File(...),
+    userId: str = Form(...)
+):
 
     print("userId:", userId)
 
-    allowed, remaining = check_limit(userId)
+    ip = request.client.host
+
+    user_key = f"{ip}_{userId}"
+
+    allowed, remaining = check_limit(user_key)
 
     if not allowed:
         return {"error": "daily_limit_reached", "remaining": 0}
