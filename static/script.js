@@ -11,7 +11,12 @@ let selectedFile = null;
 let userId = localStorage.getItem("uid");
 
 if (!userId) {
-    userId = crypto.randomUUID();
+
+    userId =
+        "user_" +
+        Math.random().toString(36).substring(2) +
+        Date.now();
+
     localStorage.setItem("uid", userId);
 }
 
